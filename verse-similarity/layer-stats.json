@@ -1,0 +1,17 @@
+{
+ "params": {
+  "run": null,
+  "outdir": null,
+  "max_ncd": 0.35,
+  "minlen": 8,
+  "max_degree": 5
+ },
+ "candidate_pairs": 8278,
+ "pairs": 2437,
+ "in_tsk": 1694,
+ "in_tsk_frac": 0.6951,
+ "not_in_tsk": 743,
+ "cross_book": 1363,
+ "not_in_tsk_cross_book": 275,
+ "verses_covered": 3796
+}

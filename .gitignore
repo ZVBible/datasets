@@ -1,0 +1,6 @@
+verse-similarity/workdir/
+*.u16
+*.u8
+*.npz
+ncd_matrix
+.DS_Store
