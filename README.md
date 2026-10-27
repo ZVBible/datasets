@@ -22,7 +22,7 @@ Each folder has its own README with schema, example records, method, and limitat
 - **Data** in this repository is dedicated to the public domain under [CC0 1.0](LICENSE).
 - **Scripts** under `*/scripts/` are [MIT](LICENSE-CODE).
 - **Underlying sources** (not redistributed as page images here):
-  - Samuel Davidson, *The Analytical Hebrew and Chaldee Lexicon* (1848; Internet Archive scan) — public domain.
+  - Benjamin Davidson, *The Analytical Hebrew and Chaldee Lexicon* (1848; Internet Archive scan) — public domain.
   - Berean Standard Bible (BSB) — public domain ([Bible Hub / Berean Bible](https://berean.bible/)).
   - Treasury of Scripture Knowledge via [OpenBible.info](https://www.openbible.info/labs/cross-references/) — [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/). Keep that attribution when you reuse TSK-derived files.
 

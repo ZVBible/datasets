@@ -1,6 +1,6 @@
 # Davidson Analytical Hebrew and Chaldee Lexicon (OCR)
 
-Machine-readable OCR of Samuel Davidson's *The Analytical Hebrew and Chaldee Lexicon* (1848), taken from the Internet Archive Bagster/Harper reprint scan.
+Machine-readable OCR of Benjamin Davidson's *The Analytical Hebrew and Chaldee Lexicon* (1848), taken from the Internet Archive Bagster/Harper reprint scan.
 
 ## Source
 
@@ -78,6 +78,11 @@ Each JSONL line is an object:
 - Vowel points were **not** corrected.
 - Front matter and paradigm tables are included as OCR lines; they are not structured lexicon entries.
 - Abbreviation expansion only covers Davidson's listed English abbreviations; OCR garbling of those abbreviations may leave some unexpanded.
+
+
+## Changelog
+
+- **2026-10-27** — Fixed dual-sense abbreviation `acc.`. Davidson's own key lists both *accent* and *accusative*. The expander now chooses *accent* when context indicates stress placement (e.g. `acc. shifted`, `drawn`, `retracted`, `on ult.`, `Milel`, `id.`, `dist. acc.`), and *accusative* otherwise. Regenerated `davidson-expanded.jsonl` (312 lines changed; 0 remaining `accusative shifted`). Author attribution corrected to Benjamin Davidson.
 
 ## License
 

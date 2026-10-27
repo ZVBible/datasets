@@ -3,6 +3,8 @@
 
 Reads abbreviations.json ({"abbr": "expansion"}), applies OCR fixes (sull. -> suff.),
 then expands English analysis/gloss/raw tokens with word-boundary matching.
+Ambiguous "acc." (accent vs accusative per Davidson's key) is resolved by
+context before the generic table lookup.
 Does not expand inside Hebrew (Unicode Hebrew blocks). Does not invent Hebrew.
 """
 
@@ -27,7 +29,12 @@ def load_abbr_map(path: Path) -> list[tuple[str, str]]:
     if not isinstance(data, dict):
         raise SystemExit(f"abbreviations file must be a JSON object: {path}")
     # Longest keys first so "n. f. s." / "pr. name" win over "n." / "pr."
-    items = [(str(k), str(v)) for k, v in data.items() if k and v and str(k) != str(v)]
+    # Keys starting with "_" are documentation notes, not abbreviations.
+    items = [
+        (str(k), str(v))
+        for k, v in data.items()
+        if k and v and str(k) != str(v) and not str(k).startswith("_")
+    ]
     items.sort(key=lambda kv: (-len(kv[0]), kv[0].lower()))
     return items
 
@@ -41,6 +48,41 @@ def ocr_fix_english(text: str) -> str:
     # Davidson divider X often glued to following n. (n.f.s. / n. m. s.)
     text = re.sub(r"(?<![A-Za-z])X(?=n\.)", "X ", text)
     return text
+
+
+# Davidson's key lists both senses for "acc.": accent and accusative.
+# Prefer "accent" when nearby wording is about stress placement.
+_ACCENT_AFTER = re.compile(
+    r"(?<![A-Za-z])acc\."
+    r"(?=\s*(?:"
+    r"shift\w*"           # shifted / shifte / shiftec (OCR truncations)
+    r"|drawn?\w*"         # drawn / drawr
+    r"|retract\w*"
+    r"|retain\w*"
+    r"|on\b"              # acc. on ult.
+    r"|mil\w*"            # Milel / mil / milél
+    r"|id\b"              # acc. id. = accent the same
+    r"|pausal\b"
+    r"|pause\b"
+    r"))",
+    flags=re.IGNORECASE,
+)
+_DIST_ACC = re.compile(
+    r"(?<![A-Za-z])dist\.?\s*acc\.(?![A-Za-z])",
+    flags=re.IGNORECASE,
+)
+
+
+def expand_acc_ambiguous(text: str) -> str:
+    """Resolve dual-sense 'acc.' before the generic abbreviation table.
+
+    Accent contexts become 'accent'; remaining 'acc.' stay for expansion to
+    'accusative' via abbreviations.json.
+    """
+    text = _DIST_ACC.sub("distinctive accent", text)
+    text = _ACCENT_AFTER.sub("accent", text)
+    return text
+
 
 
 def _abbr_pattern(abbr: str) -> re.Pattern[str]:
@@ -178,6 +220,7 @@ def expand_text(text: str, patterns: list[tuple[re.Pattern[str], str]]) -> str:
         chunk = ocr_fix_english(chunk)
         chunk, chron = protect_chronicles(chunk)
         chunk = expand_person_clusters(chunk)
+        chunk = expand_acc_ambiguous(chunk)
         chunk = expand_english(chunk, patterns)
         chunk = restore_chronicles(chunk, chron)
         return chunk
